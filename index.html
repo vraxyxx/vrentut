@@ -1,984 +1,322 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>TempMail Generator</title>  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>    
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      text-align: center;
+      padding: 30px;
+    }
+    .container {
+      max-width: 550px;
+      margin: auto;
+      background: #16213e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00f0ff;
+    }
+    .email-box, .history-item {
+      font-size: 16px;
+      background: #0f3460;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      margin: 5px;
+      border-radius: 8px;
+      background: #00f0ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00bcd4;
+    }
+    .delete-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      font-size: 12px;
+      margin-left: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background: #e60000;
+    }
+    .message {
+      background: #1a1a2e;
+      border: 1px solid #00f0ff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .message strong {
+      font-size: 18px;
+      color: #00f0ff;
+    }
+    .history {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .history h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #00f0ff;
+    }
+    .history-item {
+      background: #0d1b2a;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+    }
+    .history-name {
+      color: #00f0ff;
+      font-weight: bold;
+      display: block;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRISANTO KIRIDO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" href="https://i.imgur.com/zi15QL3.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://i.imgur.com/zi15QL3.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1E1A34">
+    /* Follow Button */
+    .follow-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #4267B2;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      font-size: 22px;
+      text-decoration: none;
+      box-shadow: 0 0 10px #4267B2, 0 0 20px #4267B2;
+      animation: bounce 2s infinite;
+      z-index: 9999;
+    }
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#8B5CF6',
-                        'primary-darker': '#7C3AED',
-                        'text-main': '#E5E7EB',
-                        'text-muted': '#9CA3AF',
-                        'bg-container': '#1E1A34',
-                        'bg-card': 'rgba(43, 42, 62, 0.7)',
-                        'border-color': 'rgba(139, 92, 246, 0.15)',
-                        'input-bg': 'rgba(43, 42, 62, 0.5)',
-                        'input-border': 'rgba(139, 92, 246, 0.3)',
-                        'nav-bg': 'rgba(30, 26, 52, 0.95)',
-                        'nav-border': 'rgba(139, 92, 246, 0.2)',
-                        'modal-bg': '#2a2744',
-                        'success-bg': '#166534',
-                        'success-text': '#dcfce7',
-                        'error-bg': '#991b1b',
-                        'error-text': '#fee2e2',
-                        'info-bg': 'rgba(139, 92, 246, 0.1)',
-                        'info-text': '#d8b4fe',
-                        'info-border': 'rgba(139, 92, 246, 0.3)',
-                        'warning-bg': 'rgba(245, 158, 11, 0.1)',
-                        'warning-text': '#fde68a',
-                        'warning-border': 'rgba(217, 119, 6, 0.3)',
-                        'video-bg': 'rgba(22, 163, 74, 0.1)',
-                        'video-text': '#bbf7d0',
-                        'video-border': 'rgba(21, 128, 61, 0.3)',
-                        'server-item-bg-hover': 'rgba(139, 92, 246, 0.1)',
-                        'status-active': '#22c55e',
-                        'status-offline': '#ef4444',
-                        'status-timeout': '#f59e0b',
-                    },
-                    boxShadow: {
-                        'primary-glow': '0 0 15px rgba(139, 92, 246, 0.3)',
-                        'card': '0 5px 20px rgba(0, 0, 0, 0.2)',
-                        'header': '0 2px 10px rgba(30, 26, 52, 0.2)',
-                        'nav': '0 -2px 10px rgba(30, 26, 52, 0.2)',
-                    }
-                },
-            },
-        }
-    </script>
+    .follow-btn:hover {
+      background: #365899;
+      box-shadow: 0 0 15px #365899;
+    }
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: contain;
-            background-color: theme('colors.bg-container');
-            color: theme('colors.text-main');
-        }
-
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: theme('colors.primary');
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: theme('colors.primary-darker');
-        }
-
-        .content-section {
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.75rem;
-            color: inherit;
-            position: relative;
-            padding-bottom: 0rem;
-        }
-
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.75);
-            z-index: 1050;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            animation: modalFadeIn 0.3s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal-content {
-            padding: 1.75rem;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            min-width: 300px;
-            max-width: 90%;
-            border: 1px solid theme('colors.border-color');
-            background-color: theme('colors.modal-bg');
-            color: theme('colors.text-main');
-            animation: modalScaleUp 0.3s ease-out;
-            position: relative;
-        }
-
-        @keyframes modalScaleUp {
-            from {
-                transform: scale(0.95);
-                opacity: 0.7;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        #responseModal .modal-content {
-            padding: 1.75rem;
-        }
-
-        .modal-content.success {
-            border-left: 5px solid theme('colors.status-active');
-            background-color: theme('colors.success-bg');
-            color: theme('colors.success-text');
-        }
-
-        .modal-content.error {
-            border-left: 5px solid theme('colors.status-offline');
-            background-color: theme('colors.error-bg');
-            color: theme('colors.error-text');
-        }
-
-        .tutorial-video {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.75rem;
-            background-color: #000;
-            border: 1px solid theme('colors.border-color');
-            box-shadow: theme('boxShadow.card');
-            display: block;
-        }
-
-        .nav-item {
-            transition: color 0.2s ease-in-out;
-        }
-
-        .nav-indicator {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus,
-        button:focus-visible {
-            outline: 2px solid theme('colors.primary') !important;
-            outline-offset: 2px;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-        }
-
-        button,
-        .nav-item,
-        .server-item {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        .server-item {
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-            cursor: pointer;
-            border-color: theme('colors.input-border');
-        }
-
-        .server-item:not(.disabled):hover {
-            background-color: theme('colors.server-item-bg-hover');
-        }
-
-        .server-item.disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .modal-close-button {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            padding: 0.5rem;
-            border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.05);
-            line-height: 1;
-            transition: background-color 0.2s;
-        }
-
-        .modal-close-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .heading-underline::after {
-             content: '';
-             position: absolute;
-             left: 0;
-             bottom: -2px;
-             width: 100%;
-             height: 3px;
-             background-color: theme('colors.primary');
-             opacity: 0.6;
-             border-radius: 2px;
-        }
-
-        #side-menu {
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-        }
-        #side-menu.open {
-            transform: translateX(0);
-        }
-        #menu-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-
-    </style>
+    /* Custom Input Board */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .popup-box {
+      background: #0f3460;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00f0ff;
+      max-width: 300px;
+      width: 100%;
+      text-align: center;
+    }
+    .popup-box h3 {
+      margin-bottom: 15px;
+      color: #00f0ff;
+    }
+    .popup-box input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    .popup-box .popup-btn {
+      background: #00f0ff;
+      color: #000;
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-weight: bold;
+    }
+    .popup-box .popup-btn:hover {
+      background: #00bcd4;
+    }
+  </style>
 </head>
+  <body>  
+  <div class="container">    
+    <h2><i class="fa-solid fa-envelope"></i> TempMail Generator</h2>    
+    <div class="email-box" id="email">Click "Generate" to create email</div>    
+    <div class="email-box" id="tokenBox">Token: N/A</div>    
+    <button id="generateBtn" onclick="openNamePopup()"><i class="fa-solid fa-plus"></i> Generate New Email</button>    
+    <button onclick="copyEmail()"><i class="fa-solid fa-copy"></i> Copy Email</button>    
+    <button onclick="refreshInbox()"><i class="fa-solid fa-rotate"></i> Refresh Inbox</button>    
+    
+    <div class="history" id="history">      
+      <h3><i class="fa-solid fa-scroll"></i> Email/Token History</h3>      
+      <div id="historyList"></div>    
+    </div>    
+    <div id="messages"></div>  
+  </div>  
 
-<body class="bg-bg-container text-text-main font-poppins">
-    <div class="max-w-md mx-auto min-h-screen pb-20 bg-bg-container shadow-lg flex flex-col relative overflow-x-hidden">
+  <!-- Follow Button -->
+  <a href="https://www.facebook.com/johnalpays" class="follow-btn" target="_blank" title="Follow me on Facebook">
+    <i class="fab fa-facebook-f"></i>
+  </a>
 
-        <header class="p-4 border-b bg-nav-bg border-nav-border sticky top-0 z-40 backdrop-blur-md shadow-header">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                   <img src="https://i.imgur.com/zi15QL3.png" alt="Logo" class="w-8 h-8 bg-primary p-1 rounded-lg">
-                   <h1 class="text-xl font-semibold text-inherit">Share Boost</h1>
-                   <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">v2.1.0</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button class="text-text-muted hover:text-primary transition-colors p-1.5 bg-primary/10 rounded-lg">
-                        <i data-lucide="settings-2" class="w-5 h-5 text-primary"></i>
-                    </button>
-                    <button id="menu-button" class="text-text-muted hover:text-primary transition-colors">
-                        <i data-lucide="menu" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="flex-grow overflow-y-auto p-5">
-            <div class="content-sections">
-                <section id="home-section" class="content-section active">
-                    <form id="SHARE BOOST-form" class="space-y-5 mt-5">
-                        <div>
-                            <label for="cookies" class="text-sm font-medium text-text-muted mb-1.5 block flex items-center gap-1.5">
-                                <i data-lucide="cookie" class="w-4 h-4 text-primary"></i> Appstate:
-                            </label>
-                            <textarea id="cookies" name="cookie" rows="4" class="w-full p-3 rounded-lg border bg-input-bg border-input-border text-text-main placeholder-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="Paste your Facebook appstate JSON here..." required></textarea>
-                        </div>
-                        <div>
-                            <label for="urls" class="text-sm font-medium text-text-muted mb-1.5 block flex items-center gap-1.5">
-                                <i data-lucide="link" class="w-4 h-4 text-primary"></i> Post Link:
-                            </label>
-                            <input type="url" id="urls" name="url" class="w-full p-3 rounded-lg border bg-input-bg border-input-border text-text-main placeholder-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="https://www.facebook.com/..." required>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="amounts" class="text-sm font-medium text-text-muted mb-1.5 block flex items-center gap-1.5">
-                                    <i data-lucide="hash" class="w-4 h-4 text-primary"></i> Share Limit:
-                                </label>
-                                <input type="number" id="amounts" name="amount" class="w-full p-3 rounded-lg border bg-input-bg border-input-border text-text-main placeholder-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="e.g., 100" min="1" required>
-                            </div>
-                            <div>
-                                <label for="intervals" class="text-sm font-medium text-text-muted mb-1.5 block flex items-center gap-1.5">
-                                    <i data-lucide="timer" class="w-4 h-4 text-primary"></i> Delay (sec):
-                                </label>
-                                <input type="number" id="intervals" name="interval" class="w-full p-3 rounded-lg border bg-input-bg border-input-border text-text-main placeholder-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="e.g., 10" min="1" required>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-text-muted mb-1.5 block flex items-center gap-1.5">
-                                <i data-lucide="server" class="w-4 h-4 text-primary"></i> Server:
-                            </label>
-                            <input type="hidden" id="selectedServer" name="server" value="">
-                            <button type="button" id="server-select-button" class="w-full p-3 rounded-lg border bg-input-bg border-input-border text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm text-left flex justify-between items-center hover:bg-white/5">
-                                <span id="server-select-button-text">Select a Server...</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-text-muted"></i>
-                            </button>
-                        </div>
-                        <button type="submit" id="submit-button" class="w-full bg-primary text-white py-3 rounded-lg font-semibold text-base hover:bg-primary-darker transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-md hover:shadow-lg shadow-primary/30 active:scale-[0.98]" disabled>
-                            <span class="button-icon"><i data-lucide="loader-circle" class="w-5 h-5 animate-spin"></i></span>
-                            <span class="button-text">Checking Servers...</span>
-                        </button>
-                    </form>
-                </section>
-
-                <section id="tutorial-section" class="content-section">
-                    <h2 class="section-title">Video Tutorial</h2>
-                    <div class="p-3 bg-bg-card rounded-xl border border-border-color shadow-card overflow-hidden">
-                        <video class="tutorial-video" controls preload="metadata" poster="https://i.imgur.com/NHzW52j.png">
-                            <source src="https://i.imgur.com/UvbU5QK.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                    <p class="text-center text-sm text-text-muted mt-6 px-2 leading-relaxed">
-                        Watch the video to learn how to get your appstate and use the Share Boost tool correctly.
-                    </p>
-                </section>
-
-                <section id="notifications-section" class="content-section">
-                    <h2 class="section-title">Notifications</h2>
-                    <div id="notifications-list" class="space-y-4">
-                         <div class="flex items-start gap-3 p-3.5 bg-info-bg rounded-lg border border-info-border shadow-sm">
-                            <i data-lucide="paintbrush" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5"></i>
-                            <span class="text-sm text-info-text">We've updated the design for a fresh new look! Hope you like it.</span>
-                        </div>
-                        <div class="flex items-start gap-3 p-3.5 bg-info-bg rounded-lg border border-info-border shadow-sm">
-                            <i data-lucide="info" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5"></i>
-                            <span class="text-sm text-info-text">Welcome! Ensure the server is active before starting.</span>
-                        </div>
-                        <div class="flex items-start gap-3 p-3.5 bg-video-bg rounded-lg border border-video-border shadow-sm">
-                            <i data-lucide="video" class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5"></i>
-                            <span class="text-sm text-video-text">There's now a video guide in the Tutorial section!</span>
-                        </div>
-                        <div class="flex items-start gap-3 p-3.5 bg-warning-bg rounded-lg border border-warning-border shadow-sm">
-                            <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5"></i>
-                            <span class="text-sm text-warning-text">Use responsibly. Avoid excessive sharing to prevent Facebook restrictions.</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-nav-bg border-t border-nav-border max-w-md mx-auto backdrop-blur-md z-50 shadow-nav">
-            <div class="relative">
-                <div class="flex justify-around items-center px-3 py-2.5">
-                    <a href="#" data-section="home" class="nav-item flex flex-col items-center text-primary p-2 w-1/3">
-                        <i data-lucide="home" class="w-5 h-5 mb-0.5"></i><span class="text-xs font-medium">Home</span>
-                    </a>
-                    <a href="#" data-section="tutorial" class="nav-item flex flex-col items-center text-text-muted p-2 w-1/3 hover:text-primary transition-colors">
-                        <i data-lucide="play-circle" class="w-5 h-5 mb-0.5"></i><span class="text-xs font-medium">Tutorial</span>
-                    </a>
-                    <a href="#" data-section="notifications" class="nav-item flex flex-col items-center text-text-muted p-2 w-1/3 hover:text-primary transition-colors">
-                        <i data-lucide="bell" class="w-5 h-5 mb-0.5"></i><span class="text-xs font-medium">Notify</span>
-                    </a>
-                </div>
-                <div class="nav-indicator absolute bottom-0 left-0 h-1 bg-primary rounded-t-full" style="width: 33.33%"></div>
-            </div>
-        </nav>
-
-        <div id="responseModal" class="modal">
-            <div class="modal-content flex flex-col items-center gap-3">
-                <div id="modal-icon"></div>
-                <div id="responseMessage" class="text-sm font-medium"></div>
-            </div>
-        </div>
-
-        <div id="serverModal" class="modal">
-            <div class="modal-content text-left">
-                <button type="button" class="modal-close-button" aria-label="Close server selection" onclick="document.getElementById('serverModal').style.display='none'">
-                    <i data-lucide="x" class="w-4 h-4 text-text-muted"></i>
-                </button>
-                <h3 class="text-lg font-semibold mb-4 text-center">Select Server</h3>
-                <div id="server-list" class="space-y-2 max-h-[40vh] overflow-y-auto pr-2">
-                </div>
-            </div>
-        </div>
-
-        <div id="apkDownloadModal" class="modal">
-            <div class="modal-content text-center flex flex-col items-center gap-4">
-                <button type="button" class="modal-close-button" aria-label="Close APK Download" onclick="handleApkModalClose('later')">
-                    <i data-lucide="x" class="w-4 h-4 text-text-muted"></i>
-                </button>
-                <img src="https://i.imgur.com/zi15QL3.png" alt="Share Booster Logo" class="w-16 h-16 mb-2 rounded-lg bg-primary p-2">
-                <h3 class="text-lg font-semibold text-text-main">Share Booster</h3>
-                <p class="text-sm text-text-muted px-2">
-                    Do you want more people to see and share your Facebook post? Download this app first. It's an easy to use use tool that helps boost shares on your Facebook posts.
-                </p>
-                <a href="Share Booster-kris.apk" download="Share Booster-kris.apk" class="w-full bg-primary text-white py-2.5 px-4 rounded-lg font-semibold text-sm hover:bg-primary-darker transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg shadow-primary/30 active:scale-[0.98]">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    Download APK
-                </a>
-                <button type="button" class="text-xs text-text-muted hover:text-text-main underline mt-2" onclick="handleApkModalClose('later')">
-                    Maybe Later
-                </button>
-            </div>
-        </div>
-
-        <div id="menu-overlay" class="fixed inset-0 bg-black/60 z-[55] hidden opacity-0"></div>
-        <div id="side-menu" class="fixed top-0 left-0 bottom-0 w-72 bg-nav-bg shadow-lg z-[60] flex flex-col p-5 border-r border-nav-border">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-2.5">
-                   <img src="https://i.imgur.com/zi15QL3.png" alt="Logo" class="w-8 h-8 bg-primary p-1 rounded-lg">
-                   <h2 class="text-lg font-semibold text-inherit">Menu</h2>
-                </div>
-                <button id="close-menu-button" class="text-text-muted hover:text-primary p-1 rounded-full hover:bg-white/10">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <nav class="flex-grow space-y-2">
-                 <a href="#" data-section="home" class="side-menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-main bg-primary/10 font-medium">
-                     <i data-lucide="home" class="w-5 h-5 text-primary"></i>
-                     <span>Home</span>
-                 </a>
-                 <a href="#" data-section="tutorial" class="side-menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-muted hover:text-text-main hover:bg-white/10 transition-colors">
-                     <i data-lucide="play-circle" class="w-5 h-5"></i>
-                     <span>Tutorial</span>
-                 </a>
-                 <a href="#" data-section="notifications" class="side-menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-muted hover:text-text-main hover:bg-white/10 transition-colors">
-                     <i data-lucide="bell" class="w-5 h-5"></i>
-                     <span>Notifications</span>
-                 </a>
-            </nav>
-            <div class="mt-auto pt-4 border-t border-nav-border">
-                 <a href="https://www.facebook.com/profile.php?id=61568262432328" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full bg-primary/10 text-primary py-2.5 px-4 rounded-lg font-semibold text-sm hover:bg-primary/20 transition-all duration-300 shadow-sm active:scale-[0.98]">
-                     <i data-lucide="code" class="w-4 h-4"></i>
-                     Krisanto Profile
-                 </a>
-            </div>
-        </div>
-
-
+  <!-- Custom Popup -->
+  <div id="popup" class="popup-overlay" style="display:none;">
+    <div class="popup-box">
+      <h3>Enter a name for this email</h3>
+      <input type="text" id="emailNameInput" placeholder="My Email" />
+      <button class="popup-btn" onclick="confirmName()">Confirm</button>
+      <button class="popup-btn" onclick="closePopup()">Cancel</button>
     </div>
+  </div>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5625905404408423"
-     crossorigin="anonymous"></script>
+  <script>
+    let token = "";
+    let pendingGenerate = false;
+    let emailBox = document.getElementById("email");
+    let tokenBox = document.getElementById("tokenBox");
+    let messagesBox = document.getElementById("messages");
+    let historyList = document.getElementById("historyList");
 
-    <script>
-        const html = document.documentElement;
-        lucide.createIcons();
+    function openNamePopup() {
+      document.getElementById("emailNameInput").value = "";
+      document.getElementById("popup").style.display = "flex";
+      pendingGenerate = true;
+    }
 
-        const serverDefinitions = {
-        server1: { name: "Server 1", url: 'https://autoshare-by-kristbell.onrender.com' },
-        server2: { name: "Server 2", url: 'https://share-qkw2.onrender.com' },
-        server3: { name: "Server 3", url: 'https://server-3-p6lg.onrender.com' }
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+      pendingGenerate = false;
+    }
+
+    async function confirmName() {
+      const name = document.getElementById("emailNameInput").value || "Unnamed Email";
+      closePopup();
+      await generateTempMail(name);
+    }
+
+    function loadHistory() {
+      historyList.innerHTML = "";
+      const history = JSON.parse(localStorage.getItem("tempmailHistory")) || [];
+      history.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+          <span class="history-name"><i class="fa-solid fa-id-badge"></i> ${item.name || 'Unnamed Email'}</span>
+          <i class="fa-solid fa-envelope"></i> ${item.email}<br>
+          <i class="fa-solid fa-key"></i> ${item.token}
+          <br><button class="delete-btn" onclick="deleteHistory(${index})"><i class="fa-solid fa-trash"></i> Remove</button>
+        `;
+        div.onclick = (e) => {
+          if (e.target.classList.contains('delete-btn')) return;
+          token = item.token;
+          emailBox.innerText = item.email;
+          tokenBox.innerText = "Token: " + item.token;
+          refreshInbox();
         };
+        historyList.appendChild(div);
+      });
+    }
 
+    function deleteHistory(index) {
+      let history = JSON.parse(localStorage.getItem("tempmailHistory")) || [];
+      history.splice(index, 1);
+      localStorage.setItem("tempmailHistory", JSON.stringify(history));
+      loadHistory();
+    }
 
-        const submitButton = document.getElementById('submit-button');
-        const buttonText = submitButton.querySelector('.button-text');
-        const buttonIcon = submitButton.querySelector('.button-icon');
-        const serverSelectButton = document.getElementById('server-select-button');
-        const serverSelectButtonText = document.getElementById('server-select-button-text');
-        const selectedServerInput = document.getElementById('selectedServer');
-        const serverListContainer = document.getElementById('server-list');
-        const serverModal = document.getElementById('serverModal');
-        const responseModal = document.getElementById('responseModal');
-        const responseMessageElement = document.getElementById('responseMessage');
-        const responseModalIconElement = document.getElementById('modal-icon');
-        const apkDownloadModal = document.getElementById('apkDownloadModal');
-        const form = document.getElementById('share-boost-form');
-        const menuButton = document.getElementById('menu-button');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-        const closeMenuButton = document.getElementById('close-menu-button');
-        const sideMenuItems = document.querySelectorAll('.side-menu-item');
-        const navItems = document.querySelectorAll('.nav-item');
-        const navIndicator = document.querySelector('.nav-indicator');
-        const contentSections = document.querySelectorAll('.content-section');
+    function saveToHistory(name, email, token) {
+      let history = JSON.parse(localStorage.getItem("tempmailHistory")) || [];
+      const exists = history.find(item => item.email === email);
+      if (!exists) {
+        history.unshift({ name, email, token });
+        localStorage.setItem("tempmailHistory", JSON.stringify(history));
+      }
+      loadHistory();
+    }
 
-        let intervalCheck;
-        let currentSelectedServer = null;
+    async function generateTempMail(name) {
+      const generateBtn = document.getElementById("generateBtn");
+      generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+      generateBtn.disabled = true;
+      try {
+        const res = await fetch("https://haji-mix-api.gleeze.com/api/tempgen?api_key=b7803e277f88d59c3ee050bd866aa2eeaa1a6100bf60a8bca9474b886fceb9d8");
+        const data = await res.json();
+        emailBox.innerText = data.email;
+        token = data.token;
+        tokenBox.innerText = "Token: " + token;
+        saveToHistory(name, data.email, data.token);
+        refreshInbox();
+      } catch (err) {
+        emailBox.innerText = "Error generating email.";
+        tokenBox.innerText = "Token: Failed to load.";
+        console.error(err);
+      } finally {
+        generateBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Generate New Email';
+        generateBtn.disabled = false;
+      }
+    }
 
-        function handleApkModalClose(action) {
-            const oneHourInMillis = 1 * 60 * 60 * 1000;
-            const dismissUntilTimestamp = Date.now() + oneHourInMillis;
-            localStorage.setItem('apkPopupDismissedUntil', dismissUntilTimestamp.toString());
-            localStorage.removeItem('apkPopupDismissedPermanently');
-            console.log(`APK Popup: Dismissed via '${action}' until ${new Date(dismissUntilTimestamp).toLocaleString()}`);
+    function copyEmail() {
+      navigator.clipboard.writeText(emailBox.innerText);
+      alert("Email copied to clipboard!");
+    }
 
-            if (apkDownloadModal) {
-                apkDownloadModal.style.display = 'none';
-            }
+    async function refreshInbox() {
+      messagesBox.innerHTML = "<i class='fa-solid fa-inbox'></i> Loading inbox...";
+      try {
+        const res = await fetch(`https://haji-mix.up.railway.app/api/tempinbox?token=${token}`);
+        const data = await res.json();
+        if (!data.emails || data.emails.length === 0) {
+          messagesBox.innerHTML = "<p>No messages yet.</p>";
+          return;
         }
-
-        function renderServerList() {
-            serverListContainer.innerHTML = '';
-            Object.keys(serverDefinitions).forEach(key => {
-                const server = serverDefinitions[key];
-                const item = document.createElement('div');
-                item.classList.add('server-item', 'p-3', 'rounded-lg', 'border', 'flex', 'justify-between', 'items-center', 'disabled', 'bg-input-bg');
-                item.dataset.serverKey = key;
-                item.innerHTML = `
-                     <span class="server-name font-medium text-sm">${server.name}</span>
-                     <span class="server-status text-xs flex items-center gap-1.5">
-                         <span class="status-dot bg-gray-500"></span>
-                         <span class="status-text text-text-muted">Checking...</span>
-                     </span>
-                 `;
-                item.addEventListener('click', () => handleServerSelection(key));
-                serverListContainer.appendChild(item);
-            });
-            lucide.createIcons();
-        }
-
-        function handleServerSelection(key) {
-            const serverItem = serverListContainer.querySelector(`.server-item[data-server-key="${key}"]`);
-            if (serverItem && !serverItem.classList.contains('disabled')) {
-                const currentlySelected = serverListContainer.querySelector('.border-primary');
-                if (currentlySelected) {
-                   currentlySelected.classList.remove('border-primary', 'bg-primary/10');
-                   currentlySelected.classList.add('border-input-border', 'bg-input-bg');
-                }
-
-                serverItem.classList.remove('border-input-border', 'bg-input-bg');
-                serverItem.classList.add('border-primary', 'bg-primary/10');
-
-                currentSelectedServer = key;
-                selectedServerInput.value = key;
-                serverSelectButtonText.textContent = `${serverDefinitions[key].name} (Active)`;
-                serverModal.style.display = 'none';
-                validateForm();
-            }
-        }
-
-
-        serverSelectButton.addEventListener('click', () => {
-            serverModal.style.display = 'flex';
-            renderServerList();
-            checkServerStatus();
-            lucide.createIcons();
+        messagesBox.innerHTML = "";
+        data.emails.forEach(msg => {
+          const subject = msg.subject || "";
+          const body = msg.body || "";
+          const codeMatch = subject.match(/\b\d{5,6}\b/) || body.match(/\b\d{5,6}\b/);
+          const confirmationCode = codeMatch ? codeMatch[0] : "Not found";
+          const msgDiv = document.createElement("div");
+          msgDiv.className = "message";
+          msgDiv.innerHTML = `
+            <strong><i class="fa-solid fa-envelope-open-text"></i> Confirmation Code:</strong><br>
+            <span style="font-size: 24px; color: #00f0ff;"><b>${confirmationCode}</b></span>
+          `;
+          messagesBox.appendChild(msgDiv);
         });
+      } catch (err) {
+        messagesBox.innerHTML = "<p>Error loading inbox.</p>";
+        console.error(err);
+      }
+    }
 
-        function updateButtonState(text, iconName, enabled, isError = false) {
-            buttonText.textContent = text;
-            buttonIcon.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5 ${iconName === 'loader-circle' ? 'animate-spin' : ''}"></i>`;
-            lucide.createIcons();
-
-            const shouldBeEnabled = enabled && selectedServerInput.value !== '';
-            submitButton.disabled = !shouldBeEnabled;
-
-            const primaryColor = tailwind.config.theme.extend.colors.primary;
-            const primaryDarkerColor = tailwind.config.theme.extend.colors['primary-darker'];
-            const errorColor = tailwind.config.theme.extend.colors['error-bg'];
-            const errorDarkerColor = '#7f1d1d';
-
-            submitButton.style.backgroundColor = '';
-            submitButton.classList.remove('bg-primary', 'hover:bg-primary-darker', 'bg-red-700', 'hover:bg-red-800');
-
-            if (isError) {
-                 submitButton.style.backgroundColor = errorColor;
-            } else if (shouldBeEnabled) {
-                submitButton.classList.add('bg-primary', 'hover:bg-primary-darker');
-            } else {
-                 submitButton.classList.add('bg-primary');
-            }
-        }
-
-        async function checkServerStatus() {
-            let oneServerActive = false;
-
-            const statusPromises = Object.keys(serverDefinitions).map(async (key) => {
-                const server = serverDefinitions[key];
-                const serverItem = serverListContainer.querySelector(`.server-item[data-server-key="${key}"]`);
-                const statusDot = serverItem?.querySelector('.status-dot');
-                const statusTextElement = serverItem?.querySelector('.status-text');
-
-                if (!serverItem || !statusDot || !statusTextElement) return false;
-
-                let statusText = 'Checking...';
-                let statusColorClass = 'bg-gray-500';
-                let isActive = false;
-
-                 const activeColor = tailwind.config.theme.extend.colors['status-active'];
-                 const offlineColor = tailwind.config.theme.extend.colors['status-offline'];
-                 const timeoutColor = tailwind.config.theme.extend.colors['status-timeout'];
-
-
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 6000);
-                    await fetch(server.url, { signal: controller.signal, mode: 'no-cors' });
-                    clearTimeout(timeoutId);
-                    statusText = 'Active';
-                    statusColorClass = 'bg-status-active';
-                    isActive = true;
-                    oneServerActive = true;
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        statusText = 'Timeout';
-                        statusColorClass = 'bg-status-timeout';
-                    } else {
-                        statusText = 'Offline';
-                        statusColorClass = 'bg-status-offline';
-                    }
-                }
-
-                statusDot.className = `status-dot ${statusColorClass}`;
-                statusTextElement.textContent = statusText;
-                statusTextElement.classList.toggle('text-text-muted', !isActive);
-                statusTextElement.classList.toggle('text-status-active', isActive);
-
-                serverItem.classList.toggle('disabled', !isActive);
-                 if(currentSelectedServer === key) {
-                     serverItem.classList.toggle('border-primary', isActive);
-                     serverItem.classList.toggle('border-input-border', !isActive);
-                 } else {
-                     serverItem.classList.remove('border-primary');
-                     serverItem.classList.add('border-input-border');
-                 }
-
-
-                if (!isActive && currentSelectedServer === key) {
-                    currentSelectedServer = null;
-                    selectedServerInput.value = '';
-                    serverSelectButtonText.textContent = 'Select a Server...';
-                    serverItem.classList.remove('border-primary', 'bg-primary/10');
-                    serverItem.classList.add('border-input-border', 'bg-input-bg');
-                    validateForm();
-                } else if (isActive && currentSelectedServer === key) {
-                    serverSelectButtonText.textContent = `${server.name} (Active)`;
-                    serverItem.classList.remove('border-input-border', 'bg-input-bg');
-                    serverItem.classList.add('border-primary', 'bg-primary/10');
-                }
-                return isActive;
-            });
-
-            await Promise.all(statusPromises);
-
-            if (buttonText.textContent !== 'Submitting...') {
-                if (!oneServerActive) {
-                    updateButtonState('All Servers Offline', 'alert-triangle', false, true);
-                    if (currentSelectedServer) {
-                         currentSelectedServer = null;
-                         selectedServerInput.value = '';
-                         serverSelectButtonText.textContent = 'Select a Server...';
-                    }
-                } else {
-                     validateForm();
-                }
-            }
-
-            clearInterval(intervalCheck);
-            intervalCheck = setInterval(checkServerStatus, 60000);
-        }
-
-        function showModal(message, type = 'info') {
-             responseMessageElement.textContent = message;
-             responseModal.style.display = 'flex';
-             const modalContent = responseModal.querySelector('.modal-content');
-             modalContent.className = 'modal-content flex flex-col items-center gap-3';
-
-             let iconName = 'info';
-             let iconColorClass = 'text-primary';
-
-             if (type === 'success') {
-                 modalContent.classList.add('success');
-                 iconName = 'check-circle-2';
-                 iconColorClass = 'text-status-active';
-             } else if (type === 'error') {
-                 modalContent.classList.add('error');
-                 iconName = 'alert-circle';
-                 iconColorClass = 'text-status-offline';
-             } else if (type === 'loading') {
-                 iconName = 'loader-circle';
-                 iconColorClass = 'text-primary';
-                 responseModalIconElement.innerHTML = `<i data-lucide="${iconName}" class="w-8 h-8 ${iconColorClass} animate-spin"></i>`;
-                 lucide.createIcons();
-                 return;
-             }
-
-             responseModalIconElement.innerHTML = `<i data-lucide="${iconName}" class="w-8 h-8 ${iconColorClass}"></i>`;
-             lucide.createIcons();
-
-             setTimeout(() => {
-                 if (responseModal.style.display === 'flex') {
-                     responseModal.style.display = 'none';
-                 }
-             }, 400);
-         }
-
-        [responseModal, serverModal, apkDownloadModal].forEach(modalInstance => {
-            if (modalInstance) {
-                modalInstance.addEventListener('click', (event) => {
-                    if (event.target === modalInstance) {
-                         if (modalInstance === apkDownloadModal) {
-                             handleApkModalClose('later');
-                         } else {
-                             modalInstance.style.display = 'none';
-                         }
-                    }
-                });
-            }
-        });
-
-
-        function validateForm() {
-            const serverSelected = selectedServerInput.value !== '';
-             const anyServerActive = Array.from(serverListContainer?.querySelectorAll('.server-item:not(.disabled)') || []).length > 0;
-
-             const allInputsFilled = Array.from(form.elements).every(el => {
-                 if (el.required) {
-                     return el.value && el.value.trim() !== '';
-                 }
-                 return true;
-             });
-
-             if (!anyServerActive) {
-                 updateButtonState('All Servers Offline', 'alert-triangle', false, true);
-             } else if (!serverSelected) {
-                 updateButtonState('Select Server First', 'alert-circle', false, false);
-             } else if (!allInputsFilled) {
-                 updateButtonState('Fill All Fields', 'edit-3', false, false);
-             } else {
-                 updateButtonState('Start Boosting', 'rocket', true, false);
-             }
-         }
-
-
-        form.onsubmit = async function(event) {
-            event.preventDefault();
-
-             validateForm();
-             if (submitButton.disabled) {
-                 if (!selectedServerInput.value) {
-                     showModal('Please select an active server first.', 'error');
-                 } else {
-                     showModal('Please fill in all required fields.', 'error');
-                 }
-                 return;
-             }
-
-            const serverValue = selectedServerInput.value;
-            const url = document.getElementById('urls').value;
-            const amount = document.getElementById('amounts').value;
-            const cookie = document.getElementById('cookies').value;
-            const interval = document.getElementById('intervals').value;
-             if (!url || !amount || !cookie || !interval || !serverValue) {
-                 showModal('Please fill in all required fields and select a server.', 'error');
-                 validateForm();
-                 return;
-             }
-
-            updateButtonState('Submitting...', 'loader-circle', false);
-            showModal('Submitting request...', 'loading');
-
-            try {
-                const serverUrl = serverDefinitions[serverValue]?.url;
-                if (!serverUrl) throw new Error("Selected server definition not found.");
-
-                const response = await fetch(`${serverUrl}/api/submit`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        cookie: cookie,
-                        url: url,
-                        amount: parseInt(amount),
-                        interval: parseInt(interval)
-                    }),
-                    headers: { 'Content-Type': 'application/json' },
-                    signal: AbortSignal.timeout(20000)
-                });
-
-                let data;
-                try {
-                     const contentType = response.headers.get("content-type");
-                     if (contentType && contentType.indexOf("application/json") !== -1) {
-                         data = await response.json();
-                     } else {
-                         const textResponse = await response.text();
-                         throw new Error(textResponse || `Server returned status ${response.status}`);
-                     }
-                } catch (parseError) {
-                     throw new Error(`Failed to process server response. Status: ${response.status}. ${parseError.message}`);
-                }
-
-                if (!response.ok) {
-                    throw new Error(data?.message || response.statusText || `Server error: ${response.status}`);
-                }
-
-                showModal(data.message || 'Submitted successfully! Processing started.', 'success');
-                form.reset();
-                selectedServerInput.value = '';
-                serverSelectButtonText.textContent = 'Select a Server...';
-                currentSelectedServer = null;
-                 const selectedItem = serverListContainer.querySelector('.border-primary');
-                 if (selectedItem) {
-                     selectedItem.classList.remove('border-primary', 'bg-primary/10');
-                     selectedItem.classList.add('border-input-border', 'bg-input-bg');
-                 }
-
-            } catch (error) {
-                console.error("Submission Error:", error);
-                const errorMessage = error.name === 'TimeoutError'
-                    ? 'Request timed out. Server might be busy or unresponsive.'
-                    : `Error: ${error.message}`;
-                showModal(errorMessage, 'error');
-            } finally {
-                 if (responseModalIconElement.querySelector('[data-lucide="loader-circle"]')) {
-                     responseModal.style.display = 'none';
-                 }
-                 validateForm();
-            }
-        };
-
-        const navItemCount = navItems.length;
-        const indicatorWidthPercent = 100 / navItemCount;
-        if (navIndicator) {
-             navIndicator.style.width = `${indicatorWidthPercent}%`;
-        }
-
-
-        function setActiveSection(sectionName) {
-            const targetSectionId = `${sectionName}-section`;
-            const targetSection = document.getElementById(targetSectionId);
-
-            contentSections.forEach(section => section.classList.remove('active'));
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-
-            navItems.forEach((navItem, index) => {
-                if (navItem.dataset.section === sectionName) {
-                    navItem.classList.remove('text-text-muted');
-                    navItem.classList.add('text-primary');
-                    if (navIndicator) {
-                         navIndicator.style.transform = `translateX(${index * 100}%)`;
-                    }
-                } else {
-                    navItem.classList.remove('text-primary');
-                    navItem.classList.add('text-text-muted');
-                }
-            });
-
-            sideMenuItems.forEach((sideItem) => {
-                 const iconElement = sideItem.querySelector('i[data-lucide]') || sideItem.querySelector('svg');
-
-                 if (sideItem.dataset.section === sectionName) {
-                     sideItem.classList.add('text-text-main', 'bg-primary/10', 'font-medium');
-                     sideItem.classList.remove('text-text-muted');
-                     if (iconElement) {
-                        iconElement.classList.add('text-primary');
-                     }
-                 } else {
-                     sideItem.classList.remove('text-text-main', 'bg-primary/10', 'font-medium');
-                     sideItem.classList.add('text-text-muted');
-                     if (iconElement) {
-                        iconElement.classList.remove('text-primary');
-                     }
-                 }
-             });
-
-             closeSideMenu();
-        }
-
-        navItems.forEach((item) => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                setActiveSection(this.dataset.section);
-            });
-        });
-
-        sideMenuItems.forEach((item) => {
-             item.addEventListener('click', function(e) {
-                 e.preventDefault();
-                 setActiveSection(this.dataset.section);
-             });
-         });
-
-        function openSideMenu() {
-            menuOverlay.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sideMenu.classList.add('open');
-                menuOverlay.classList.remove('opacity-0');
-            });
-        }
-
-        function closeSideMenu() {
-            sideMenu.classList.remove('open');
-            menuOverlay.classList.add('opacity-0');
-            setTimeout(() => {
-                 menuOverlay.classList.add('hidden');
-             }, 300);
-        }
-
-        if(menuButton) menuButton.addEventListener('click', openSideMenu);
-        if(closeMenuButton) closeMenuButton.addEventListener('click', closeSideMenu);
-        if(menuOverlay) menuOverlay.addEventListener('click', closeSideMenu);
-
-
-        window.onload = () => {
-            renderServerList();
-            checkServerStatus();
-            validateForm();
-
-            ['cookies', 'urls', 'amounts', 'intervals'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                     input.addEventListener('input', validateForm);
-                     input.addEventListener('change', validateForm);
-                 }
-            });
-
-            if (apkDownloadModal) {
-                const dismissedUntilRaw = localStorage.getItem('apkPopupDismissedUntil');
-                const dismissedUntil = dismissedUntilRaw ? parseInt(dismissedUntilRaw, 10) : 0;
-                const now = Date.now();
-
-                if (now > dismissedUntil) {
-                     console.log("Showing APK Popup");
-                     apkDownloadModal.style.display = 'flex';
-                     lucide.createIcons();
-                } else {
-                    console.log("APK Popup hidden until dismissal time.");
-                    apkDownloadModal.style.display = 'none';
-                }
-            }
-
-             const initialActiveNavItem = document.querySelector('.nav-item.text-primary');
-             if (initialActiveNavItem && initialActiveNavItem.dataset.section) {
-                 setActiveSection(initialActiveNavItem.dataset.section);
-             } else {
-                 setActiveSection('home');
-             }
-
-            lucide.createIcons();
-        }
-
-    </script>
+    loadHistory();
+  </script>
 </body>
-
 </html>
